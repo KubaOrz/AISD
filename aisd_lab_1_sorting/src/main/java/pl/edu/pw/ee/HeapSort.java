@@ -5,6 +5,8 @@ import java.util.List;
 import pl.edu.pw.ee.services.HeapExtension;
 import pl.edu.pw.ee.services.Sorting;
 
+import static pl.edu.pw.ee.services.SortUtils.swap;
+
 public class HeapSort implements Sorting {
 
     private List<Double> data;
@@ -22,9 +24,10 @@ public class HeapSort implements Sorting {
         heap = new Heap(data);
 
         for (int i = n - 1; i > 0; i--) {
-            swap(0, i);
+            swap(data, 0, i);
             heap.heapify(0, i);
         }
+        listToArray(nums, data);
     }
 
     private List<Double> boxingData(double[] nums) {
@@ -37,10 +40,16 @@ public class HeapSort implements Sorting {
         return numsAsList;
     }
 
-    private void swap(int firstId, int secondId) {
+    private void listToArray(double[] nums, List<Double> data) {
+        for (int i = 0; i < data.size(); i++) {
+            nums[i] = data.get(i);
+        }
+    }
+
+    /*private void swap(int firstId, int secondId) {
         Double firstVal = data.get(firstId);
         data.set(firstId, data.get(secondId));
         data.set(secondId, firstVal);
-    }
+    }*/
 
 }

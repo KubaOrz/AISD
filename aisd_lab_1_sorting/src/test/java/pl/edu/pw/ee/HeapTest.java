@@ -3,19 +3,21 @@ package pl.edu.pw.ee;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import pl.edu.pw.ee.services.HeapInterface;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class HeapTest {
 
-    private Heap<Double> heap;
+    private HeapInterface<Double> heap;
     private Heap<Double> heapFromArray;
-    private static final int delta = 0;
+    private static final double DELTA = 0;
 
     @Before
     public void setUp() {
-        heap = new Heap<>();
+
+        heap = new Heap<>(new ArrayList<Double>());
         double[] nums = {1, 6, 4, 7, 9, 10, 21, -3, -8};
         List<Double> numsToBuild = new ArrayList<>();
         for (Double num: nums) {
@@ -35,40 +37,6 @@ public class HeapTest {
     }
 
     @Test
-    public void shouldReturnProperSizeWhenInit() {
-
-        Assert.assertEquals(0, heap.getCurrentSize());
-    }
-
-    @Test
-    public void shouldReturnProperSizeWHenPutSomeElem() {
-
-        //when
-        heap.put(1.1);
-        heap.put(1.2);
-        heap.put(1.3);
-        int expected = 3;
-
-        //then
-        Assert.assertEquals(expected, heap.getCurrentSize());
-    }
-
-    @Test
-    public void shouldReturnProperSizeWHenPutAndPopSomeElem() {
-
-        //when
-        heap.put(1.1);
-        heap.put(1.2);
-        heap.put(1.3);
-        heap.pop();
-        heap.pop();
-        int expected = 1;
-
-        //then
-        Assert.assertEquals(expected, heap.getCurrentSize());
-    }
-
-    @Test
     public void shouldReturnElemWhenPutOneElem() {
 
         //given
@@ -79,11 +47,12 @@ public class HeapTest {
         double expected = 2.137;
 
         //then
-        Assert.assertEquals(expected, result, delta);
+        Assert.assertEquals(expected, result, DELTA);
     }
 
     @Test
     public void shouldReturnMaxElemWhenPutTwoElem() {
+
         //given
         heap.put(2.137);
         heap.put(2.115);
@@ -93,11 +62,12 @@ public class HeapTest {
         double expected = 2.137;
 
         //then
-        Assert.assertEquals(expected, result, delta);
+        Assert.assertEquals(expected, result, DELTA);
     }
 
     @Test
     public void shouldReturnMaxElemWhenPutSomeElem() {
+
         //given
         heap.put(2.137);
         heap.put(3.52);
@@ -113,7 +83,7 @@ public class HeapTest {
         double expected = 3246.1;
 
         //then
-        Assert.assertEquals(expected, result, delta);
+        Assert.assertEquals(expected, result, DELTA);
     }
 
     @Test
@@ -135,17 +105,7 @@ public class HeapTest {
         }
 
         //then
-        Assert.assertArrayEquals(expected, results, delta);
-    }
-
-    @Test
-    public void shouldReturnProperSizeWhenBuilt() {
-
-        //when
-        int expected = 9;
-
-        //then
-        Assert.assertEquals(expected, heapFromArray.getCurrentSize());
+        Assert.assertArrayEquals(expected, results, DELTA);
     }
 
     @Test
@@ -156,7 +116,7 @@ public class HeapTest {
         double result = heapFromArray.pop();
 
         //then
-        Assert.assertEquals(expected, result, delta);
+        Assert.assertEquals(expected, result, DELTA);
     }
 
     @Test
@@ -170,7 +130,7 @@ public class HeapTest {
         }
 
         //then
-        Assert.assertArrayEquals(expected, results, delta);
+        Assert.assertArrayEquals(expected, results, DELTA);
     }
 
 }
