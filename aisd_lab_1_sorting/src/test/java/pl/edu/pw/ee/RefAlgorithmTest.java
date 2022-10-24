@@ -9,10 +9,9 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class RefAlgorithmTest {
-    
-    private Sorting refAlgorithm;
-    
+
     private static final double delta = 0;
+    private Sorting refAlgorithm;
 
     @Before
     public void setUp() {

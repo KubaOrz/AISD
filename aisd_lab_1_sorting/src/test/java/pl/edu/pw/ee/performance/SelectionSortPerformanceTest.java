@@ -11,12 +11,11 @@ import java.io.PrintWriter;
 
 public class SelectionSortPerformanceTest {
 
+    private final int STEP = 1000;
+    private final int MAX = 100000;
     private Sorting selectionSort;
     private PrintWriter printWriter;
     private DataGenerator dataGenerator;
-    private final int STEP = 1000;
-    private final int MAX = 100000;
-
 
     @Before
     public void setUp() throws FileNotFoundException {

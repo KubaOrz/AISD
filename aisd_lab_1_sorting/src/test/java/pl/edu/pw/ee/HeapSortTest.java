@@ -10,9 +10,8 @@ import java.util.Random;
 
 public class HeapSortTest {
 
-    private Sorting heapSort;
-
     private static final double DELTA = 0;
+    private Sorting heapSort;
 
     @Before
     public void setUp() {

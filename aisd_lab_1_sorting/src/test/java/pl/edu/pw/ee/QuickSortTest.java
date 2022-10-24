@@ -10,8 +10,8 @@ import java.util.Random;
 
 public class QuickSortTest {
 
-    private Sorting quickSort;
     private static final double EPS = 0;
+    private Sorting quickSort;
 
     @Before
     public void setUp() {

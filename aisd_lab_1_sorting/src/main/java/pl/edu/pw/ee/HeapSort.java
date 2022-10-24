@@ -1,9 +1,10 @@
 package pl.edu.pw.ee;
 
-import java.util.ArrayList;
-import java.util.List;
 import pl.edu.pw.ee.services.HeapExtension;
 import pl.edu.pw.ee.services.Sorting;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static pl.edu.pw.ee.services.SortUtils.swap;
 
@@ -21,7 +22,7 @@ public class HeapSort implements Sorting {
         int n = nums.length;
 
         data = boxingData(nums);
-        heap = new Heap(data);
+        heap = new Heap<Double>(data);
 
         for (int i = n - 1; i > 0; i--) {
             swap(data, 0, i);
@@ -45,11 +46,5 @@ public class HeapSort implements Sorting {
             nums[i] = data.get(i);
         }
     }
-
-    /*private void swap(int firstId, int secondId) {
-        Double firstVal = data.get(firstId);
-        data.set(firstId, data.get(secondId));
-        data.set(secondId, firstVal);
-    }*/
 
 }

@@ -9,10 +9,10 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class SelectionSortTest {
-    
-    private Sorting selectionSort;
+
     private static final double EPS = 0;
-    
+    private Sorting selectionSort;
+
     @Before
     public void setUp() {
         selectionSort = new SelectionSort();

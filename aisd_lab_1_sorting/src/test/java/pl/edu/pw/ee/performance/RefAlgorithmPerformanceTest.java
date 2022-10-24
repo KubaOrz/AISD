@@ -2,37 +2,37 @@ package pl.edu.pw.ee.performance;
 
 import org.junit.Before;
 import org.junit.Test;
-import pl.edu.pw.ee.InsertionSort;
+import pl.edu.pw.ee.RefAlgorithm;
 import pl.edu.pw.ee.services.DataGenerator;
 import pl.edu.pw.ee.services.Sorting;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
-public class InsertionSortPerformanceTest {
+public class RefAlgorithmPerformanceTest {
 
     private final int STEP = 1000;
-    private final int MAX = 100000;
-    private Sorting insertionSort;
+    private final int MAX = 1000000;
+    private Sorting refAlgorithm;
     private DataGenerator dataGenerator;
 
     @Before
     public void setUp() {
-        insertionSort = new InsertionSort();
+        refAlgorithm = new RefAlgorithm();
         dataGenerator = new DataGenerator();
     }
 
     @Test
-    public void measureTimeForOptimisticData() throws FileNotFoundException {
+    public void measureTimeForAscendingData() throws FileNotFoundException {
         double[] nums;
         long start, finish;
         double elapsedTime;
-        PrintWriter printWriter = new PrintWriter("insertion_sort_performance_optimistic.txt");
+        PrintWriter printWriter = new PrintWriter("ref_algorithm_performance_ascending.txt");
         for (int j = 0; j < 10; j++) {
             for (int i = STEP; i <= MAX; i += STEP) {
                 nums = dataGenerator.generateAscending(i);
                 start = System.currentTimeMillis();
-                insertionSort.sort(nums);
+                refAlgorithm.sort(nums);
                 finish = System.currentTimeMillis();
                 elapsedTime = (double) (finish - start) / 1000;
                 printWriter.print(elapsedTime + "; ");
@@ -43,17 +43,16 @@ public class InsertionSortPerformanceTest {
     }
 
     @Test
-    public void measureTimeForPessimisticData() throws FileNotFoundException {
+    public void measureTimeForDescendingData() throws FileNotFoundException {
         double[] nums;
         long start, finish;
         double elapsedTime;
-        PrintWriter printWriter = new PrintWriter("insertion_sort_performance_pessimistic.txt");
+        PrintWriter printWriter = new PrintWriter("ref_algorithm_performance_descending.txt");
         for (int j = 0; j < 10; j++) {
             for (int i = STEP; i <= MAX; i += STEP) {
                 nums = dataGenerator.generateDescending(i);
-                System.out.println();
                 start = System.currentTimeMillis();
-                insertionSort.sort(nums);
+                refAlgorithm.sort(nums);
                 finish = System.currentTimeMillis();
                 elapsedTime = (double) (finish - start) / 1000;
                 printWriter.print(elapsedTime + "; ");
@@ -68,12 +67,12 @@ public class InsertionSortPerformanceTest {
         double[] nums;
         long start, finish;
         double elapsedTime;
-        PrintWriter printWriter = new PrintWriter("insertion_sort_performance_avg.txt");
+        PrintWriter printWriter = new PrintWriter("ref_algorithm_performance_avg.txt");
         for (int j = 0; j < 10; j++) {
             for (int i = STEP; i <= MAX; i += STEP) {
                 nums = dataGenerator.generateRandom(i);
                 start = System.currentTimeMillis();
-                insertionSort.sort(nums);
+                refAlgorithm.sort(nums);
                 finish = System.currentTimeMillis();
                 elapsedTime = (double) (finish - start) / 1000;
                 printWriter.print(elapsedTime + "; ");
@@ -83,3 +82,4 @@ public class InsertionSortPerformanceTest {
         printWriter.close();
     }
 }
+

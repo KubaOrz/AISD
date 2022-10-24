@@ -1,13 +1,12 @@
 package pl.edu.pw.ee;
 
-import pl.edu.pw.ee.services.Sorting;
 import pl.edu.pw.ee.services.SortUtils;
+import pl.edu.pw.ee.services.Sorting;
 
 public class InsertionSort implements Sorting {
 
     @Override
     public void sort(double[] nums) {
-
         if (nums == null) {
             throw new IllegalArgumentException();
         }

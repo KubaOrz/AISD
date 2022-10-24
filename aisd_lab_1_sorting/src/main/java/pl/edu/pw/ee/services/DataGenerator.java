@@ -4,9 +4,8 @@ import java.util.Random;
 
 public class DataGenerator {
 
-    private Random random;
-
     private static final long SEED = 263046;
+    private Random random;
 
     public DataGenerator() {
         random = new Random(SEED);
@@ -31,8 +30,9 @@ public class DataGenerator {
     public double[] generateDescending(int size) {
         double[] generated = new double[size];
         int index = 0;
-        for (int i = size - 1; i >= 0; i++) {
+        for (int i = size; i > 0; i--) {
             generated[index] = i;
+            index++;
         }
         return generated;
     }

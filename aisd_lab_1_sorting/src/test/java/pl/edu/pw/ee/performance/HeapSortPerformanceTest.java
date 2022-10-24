@@ -11,11 +11,10 @@ import java.io.PrintWriter;
 
 public class HeapSortPerformanceTest {
 
-    private Sorting heapSort;
-    private DataGenerator dataGenerator;
     private final int STEP = 1000;
     private final int MAX = 1000000;
-
+    private Sorting heapSort;
+    private DataGenerator dataGenerator;
 
     @Before
     public void setUp() {

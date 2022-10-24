@@ -10,9 +10,9 @@ import java.util.List;
 
 public class HeapTest {
 
+    private static final double DELTA = 0;
     private HeapInterface<Double> heap;
     private Heap<Double> heapFromArray;
-    private static final double DELTA = 0;
 
     @Before
     public void setUp() {
@@ -20,7 +20,7 @@ public class HeapTest {
         heap = new Heap<>(new ArrayList<Double>());
         double[] nums = {1, 6, 4, 7, 9, 10, 21, -3, -8};
         List<Double> numsToBuild = new ArrayList<>();
-        for (Double num: nums) {
+        for (Double num : nums) {
             numsToBuild.add(num);
         }
         heapFromArray = new Heap<>(numsToBuild);

@@ -10,8 +10,8 @@ import java.util.Random;
 
 public class InsertionSortTest {
 
-    private Sorting insertionSort;
     private static final double EPS = 0;
+    private Sorting insertionSort;
 
     @Before
     public void setUp() {

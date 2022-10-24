@@ -1,9 +1,9 @@
 package pl.edu.pw.ee;
 
-import java.util.ArrayList;
-import java.util.List;
 import pl.edu.pw.ee.services.HeapExtension;
 import pl.edu.pw.ee.services.HeapInterface;
+
+import java.util.List;
 
 import static pl.edu.pw.ee.services.SortUtils.swap;
 
@@ -13,7 +13,6 @@ public class Heap<T extends Comparable<T>> implements HeapInterface<T>, HeapExte
     private int currentSize;
 
     public Heap(List<T> data) {
-
         this.data = data;
         currentSize = data.size();
         this.build();
@@ -21,14 +20,12 @@ public class Heap<T extends Comparable<T>> implements HeapInterface<T>, HeapExte
 
     @Override
     public void put(T item) {
-
         data.add(item);
         heapUp(item);
         currentSize++;
     }
 
     public void heapUp(T item) {
-
         int index = data.size() - 1;
         int parent = (index - 1) / 2;
         while (index > 0 && (item.compareTo(data.get(parent)) > 0)) {
@@ -40,7 +37,6 @@ public class Heap<T extends Comparable<T>> implements HeapInterface<T>, HeapExte
 
     @Override
     public T pop() {
-
         if (currentSize == 0) {
             throw new ArrayIndexOutOfBoundsException();
         }
@@ -49,10 +45,9 @@ public class Heap<T extends Comparable<T>> implements HeapInterface<T>, HeapExte
         heapify(0, currentSize);
         return maxValue;
     }
-    
+
     @Override
     public void build() {
-
         int n = data.size();
 
         for (int i = n / 2 - 1; i >= 0; i--) {
@@ -62,7 +57,6 @@ public class Heap<T extends Comparable<T>> implements HeapInterface<T>, HeapExte
 
     @Override
     public void heapify(int startId, int endId) {
-
         int left = 2 * startId + 1;
         int right = 2 * startId + 2;
         int largest = startId;
