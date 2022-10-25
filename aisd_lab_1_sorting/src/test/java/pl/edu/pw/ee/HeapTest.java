@@ -3,7 +3,6 @@ package pl.edu.pw.ee;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import pl.edu.pw.ee.services.HeapInterface;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +10,7 @@ import java.util.List;
 public class HeapTest {
 
     private static final double DELTA = 0;
-    private HeapInterface<Double> heap;
+    private Heap<Double> heap;
     private Heap<Double> heapFromArray;
 
     @Before
@@ -37,6 +36,77 @@ public class HeapTest {
     }
 
     @Test
+    public void shouldReturnProperSizeWhenEmpty() {
+
+        //when
+        int result = heap.getCurrentSize();
+        int expected = 0;
+
+        //then
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionWhenGivenNull() {
+
+        //when
+        Heap<Double> heapWithNull = new Heap<>(null);
+
+        //then
+        assert false;
+    }
+
+    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    public void shouldThrowExceptionWhenHeapifyWithFirstNegativeArg() {
+
+        //when
+        heap.heapify(-3, 8);
+
+        //then
+        assert false;
+    }
+
+    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    public void shouldThrowExceptionWhenHeapifyWithSecondNegativeArg() {
+
+        //when
+        heap.heapify(3, -8);
+
+        //then
+        assert false;
+    }
+
+    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    public void shouldThrowExceptionWhenHeapifyWithBothNegativeArg() {
+
+        //when
+        heap.heapify(-3, -8);
+
+        //then
+        assert false;
+    }
+
+    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    public void shouldThrowExceptionWhenHeapifyWithSecondArgTooBig() {
+
+        //when
+        heap.heapify(0, heap.getCurrentSize() + 6);
+
+        //then
+        assert false;
+    }
+
+    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    public void shouldThrowExceptionWhenHeapifyWithBothArgTooBig() {
+
+        //when
+        heap.heapify(heap.getCurrentSize() + 3, heap.getCurrentSize() + 6);
+
+        //then
+        assert false;
+    }
+
+    @Test
     public void shouldReturnElemWhenPutOneElem() {
 
         //given
@@ -48,6 +118,35 @@ public class HeapTest {
 
         //then
         Assert.assertEquals(expected, result, DELTA);
+    }
+
+    @Test
+    public void shouldReturnProperSizeWhenPutOneElem() {
+
+        //given
+        heap.put(2.0);
+
+        //when
+        int expected = 1;
+        int result = heap.getCurrentSize();
+
+        //then
+        Assert.assertEquals(expected, result);
+    }
+
+    @Test
+    public void shouldReturnProperSizeWhenPutAndPopOneElem() {
+
+        //given
+        heap.put(2.0);
+        heap.pop();
+
+        //when
+        int expected = 0;
+        int result = heap.getCurrentSize();
+
+        //then
+        Assert.assertEquals(expected, result);
     }
 
     @Test
@@ -84,6 +183,27 @@ public class HeapTest {
 
         //then
         Assert.assertEquals(expected, result, DELTA);
+    }
+
+    @Test
+    public void shouldReturnProperSizeWhenPutSomeElem() {
+
+        //given
+        heap.put(2.137);
+        heap.put(3.52);
+        heap.put(21.0);
+        heap.put(3246.1);
+        heap.put(1.1);
+        heap.put(2.2);
+        heap.put(3.3);
+        heap.put(4.4);
+
+        //when
+        int result = heap.getCurrentSize();
+        int expected = 8;
+
+        //then
+        Assert.assertEquals(expected, result);
     }
 
     @Test
@@ -131,6 +251,17 @@ public class HeapTest {
 
         //then
         Assert.assertArrayEquals(expected, results, DELTA);
+    }
+
+    @Test
+    public void shouldReturnProperSizeWhenBuilt() {
+
+        //when
+        int result = heapFromArray.getCurrentSize();
+        int expected = 9;
+
+        //then
+        Assert.assertEquals(expected, result);
     }
 
 }

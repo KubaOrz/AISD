@@ -9,17 +9,31 @@ import static pl.edu.pw.ee.services.SortUtils.swap;
 
 public class Heap<T extends Comparable<T>> implements HeapInterface<T>, HeapExtension {
 
-    private List<T> data;
+    private final List<T> data;
     private int currentSize;
 
     public Heap(List<T> data) {
+        validateData(data);
         this.data = data;
-        currentSize = data.size();
+        this.currentSize = data.size();
         this.build();
+    }
+
+    private void validateData(List<T> data) {
+        if (data == null) {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    public int getCurrentSize() {
+        return currentSize;
     }
 
     @Override
     public void put(T item) {
+        if (item == null) {
+            throw new IllegalArgumentException();
+        }
         data.add(item);
         heapUp(item);
         currentSize++;
@@ -57,6 +71,9 @@ public class Heap<T extends Comparable<T>> implements HeapInterface<T>, HeapExte
 
     @Override
     public void heapify(int startId, int endId) {
+        if (startId < 0 || endId < 0 || startId > data.size() || endId > data.size()) {
+            throw new ArrayIndexOutOfBoundsException();
+        }
         int left = 2 * startId + 1;
         int right = 2 * startId + 2;
         int largest = startId;
