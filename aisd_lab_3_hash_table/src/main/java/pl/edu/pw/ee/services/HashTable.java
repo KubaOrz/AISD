@@ -1,11 +1,11 @@
 package pl.edu.pw.ee.services;
 
-public interface HashTable {
+public interface HashTable<T> {
 
-    void add(Object value);
+    void add(T value);
 
-    Object get(Object value);
-    
-    void delete(Object value);
+    Object get(T value);
+
+    void delete(T value);
 
 }
