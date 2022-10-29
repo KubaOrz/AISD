@@ -117,11 +117,11 @@ public class HashListChaining<T> implements HashTable<T> {
         return Math.abs(hashCode) % n;
     }
 
-    private static class Elem<E> {
-        private E value;
-        private Elem<E> next;
+    private static class Elem<V> {
+        private V value;
+        private Elem<V> next;
 
-        Elem(E value, Elem<E> nextElem) {
+        Elem(V value, Elem<V> nextElem) {
             this.value = value;
             this.next = nextElem;
         }
