@@ -1,0 +1,8 @@
+-------------------------------------------------------------------------------
+Test set: pl.edu.pw.ee.performance.HashLinearProbingPerformanceTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.059 s <<< FAILURE! - in pl.edu.pw.ee.performance.HashLinearProbingPerformanceTest
+hashLinearProbingPerformanceTest  Time elapsed: 0.059 s  <<< ERROR!
+java.lang.NullPointerException: Cannot invoke "Object.hashCode()" because "newElem" is null
+	at pl.edu.pw.ee.performance.HashLinearProbingPerformanceTest.hashLinearProbingPerformanceTest(HashLinearProbingPerformanceTest.java:38)
+
