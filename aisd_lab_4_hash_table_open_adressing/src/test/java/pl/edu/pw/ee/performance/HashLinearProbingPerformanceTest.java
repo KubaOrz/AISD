@@ -1,10 +1,11 @@
 package pl.edu.pw.ee.performance;
 
-import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import pl.edu.pw.ee.HashLinearProbing;
@@ -12,34 +13,60 @@ import pl.edu.pw.ee.services.HashTable;
 
 public class HashLinearProbingPerformanceTest {
     
-    private BufferedReader reader;
-    private final String sourcePath = "src/test/java/pl/edu/pw/ee/performance/test_words.txt";
-    private final String destPath = "src/test/java/pl/edu/pw/ee/performance/test_results.txt";
     private String[] words;
-    private final int[] sizes = {4096, 8192, 16384, 32768, 65536, 131072, 262144};
-    private PrintWriter writer;
-    
+    private FileHandler fileHandler;
+    private final int[] sizes = {512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144};
+    private LinkedHashMap<Integer, ArrayList<Long>> results;
+
     @Before
     public void setUp() throws IOException {
-        reader = new BufferedReader(new FileReader(sourcePath));
-        words = new String[100000];
-        for (int i = 0; i < 100000; i++) {
-            words[i] = reader.readLine();
-        }
-        writer = new PrintWriter(destPath);
+        fileHandler = new FileHandler();
+        final String sourcePath = "src/test/java/pl/edu/pw/ee/performance/test_words.txt";
+        words = fileHandler.readWordsFromFile(sourcePath);
+        results = new LinkedHashMap<>();
     }
     
     @Test
-    public void hashLinearProbingPerformanceTest() {
-        for (int size: sizes) {
-            HashTable<String> hash = new HashLinearProbing(size);
-            long start = System.currentTimeMillis();
-            for (String word: words) {
-                hash.put(word);
-            }
-            long finish = System.currentTimeMillis();
-            long elapsedTime = finish - start;
-            writer.println(size + ": " + elapsedTime);
+    public void hashLinearProbingPerformanceTest() throws FileNotFoundException {
+        final String destPath = "src/test/java/pl/edu/pw/ee/performance/linear_probing_results.txt";
+        for (int size : sizes) {
+            results.put(size, new ArrayList<>());
         }
+        for (int i = 0; i < 30; i++) {
+            for (int size : sizes) {
+                long elapsedTime = measureElapsedTime(new HashLinearProbing<>(size));
+                results.get(size).add(elapsedTime);
+            }
+        }
+        fileHandler.writeToFile(destPath, processResults());
+    }
+
+    private long measureElapsedTime(HashTable<String> hash) {
+        long start = System.currentTimeMillis();
+        for (String word : words) {
+            hash.put(word);
+        }
+        long finish = System.currentTimeMillis();
+        return finish - start;
+    }
+
+    private LinkedHashMap<Integer, Double> processResults() {
+        LinkedHashMap<Integer, Double> avgResults = new LinkedHashMap<>();
+        for (Integer size: results.keySet()) {
+            results.get(size).sort(new Comparator<Long>() {
+                @Override
+                public int compare(Long o1, Long o2) {
+                    return o1.compareTo(o2);
+                }
+            });
+            ArrayList<Long> trimmedResults = new ArrayList<>(results.get(size).subList(10,19));
+            double avgTime = 0;
+            for (Long time: trimmedResults) {
+                avgTime += time;
+            }
+            avgTime /= trimmedResults.size();
+            avgResults.put(size, avgTime);
+        }
+        return avgResults;
     }
 }

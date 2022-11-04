@@ -3,6 +3,8 @@ package pl.edu.pw.ee;
 import pl.edu.pw.ee.exceptions.NotImplementedException;
 import pl.edu.pw.ee.services.HashTable;
 
+import java.util.Arrays;
+
 public abstract class HashOpenAdressing<T extends Comparable<T>> implements HashTable<T> {
 
     private final T nil = null;
@@ -84,12 +86,14 @@ public abstract class HashOpenAdressing<T extends Comparable<T>> implements Hash
     }
 
     private void doubleResize() {
+        T[] prevHashElems = Arrays.copyOf(this.hashElems, this.size);
         this.size *= 2;
-        T[] prevHashElems = this.hashElems.clone();
+        nElems = 0;
         this.hashElems = (T[]) new Comparable[this.size];
         for (T elem: prevHashElems) {
-            put(elem);
+            if (elem != nil) {
+                put(elem);
+            }
         }
-        //throw new NotImplementedException("This method is not yet implemented!");
     }
 }
