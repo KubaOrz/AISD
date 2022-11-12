@@ -10,13 +10,13 @@ import java.lang.reflect.Field;
 
 import static org.junit.Assert.assertEquals;
 
-public class HashLinearProbingTest {
+public class HashQuadraticProbingTest {
 
     private HashOpenAdressing<Double> hash;
 
     @Before
     public void setUp() {
-        this.hash = new HashLinearProbing<>(50);
+        this.hash = new HashQuadraticProbing<>();
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -25,16 +25,25 @@ public class HashLinearProbingTest {
         int initialSize = 0;
 
         // when
-        HashTable<Double> unusedHash = new HashLinearProbing<>(initialSize);
+        HashTable<Double> unusedHash = new HashQuadraticProbing<>(initialSize, 0.5, 0.5);
 
         // then
+        assert false;
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void should_ThrowException_WhenBothConstantsEqualToZero() {
+        //when
+        HashTable<Double> unusedHash = new HashQuadraticProbing<>(10, 0, 0);
+
+        //then
         assert false;
     }
 
     @Test
     public void should_CorrectlyAddNewElems_WhenNotExistInHashTable() {
         // given
-        HashTable<String> emptyHash = new HashLinearProbing<>();
+        HashTable<String> emptyHash = new HashQuadraticProbing<>();
         String newEleme = "nothing special";
 
         // when
@@ -78,7 +87,7 @@ public class HashLinearProbingTest {
     @Test
     public void should_CorrectlyPuElems_WhenLowHashInitSize() {
         //given
-        HashOpenAdressing<Integer> hash3 = new HashLinearProbing<>(3);
+        HashOpenAdressing<Integer> hash3 = new HashQuadraticProbing<>(3, 0.5, 0.5);
         int expectedNumOfElems = 100;
         int expectedHashSize = 192;
 
@@ -113,11 +122,12 @@ public class HashLinearProbingTest {
     @Test
     public void should_CorrectlyPutElems_WhenElemsHaveEqualHashCodes() {
         //given
-        HashOpenAdressing<ElemEqualHashCode> hashEqualCodes = new HashLinearProbing<>(30);
-        int expectedNumOfElems = 20;
+        final int numberOfElems = 20;
+        HashOpenAdressing<ElemEqualHashCode> hashEqualCodes = new HashQuadraticProbing<>(30, 0.5, 0.5);
+        int expectedNumOfElems = numberOfElems;
 
         //when
-        for (int i = 0; i < expectedNumOfElems; i++) {
+        for (int i = 0; i < numberOfElems; i++) {
             hashEqualCodes.put(new ElemEqualHashCode(i));
         }
         int actualNumOfElems = getNumOfElems(hashEqualCodes);
@@ -130,7 +140,7 @@ public class HashLinearProbingTest {
     public void should_CorrectlyPutElem_WhenElemCodeEqualsHashSize() {
         //given
         ElemEqualHashCode elem = new ElemEqualHashCode(839);
-        HashOpenAdressing<ElemEqualHashCode> hash17 = new HashLinearProbing<>(17);
+        HashOpenAdressing<ElemEqualHashCode> hash17 = new HashQuadraticProbing<>(17, 0.5, 0.5);
         int expectedNumOfElems = 1;
 
         //when
@@ -183,7 +193,7 @@ public class HashLinearProbingTest {
     public void should_CorrectlyPutAndGetElems_WhenElemsHaveEqualHashCodes() {
         //given
         final int numberOfElems = 20;
-        HashOpenAdressing<ElemEqualHashCode> hashEqualCodes = new HashLinearProbing<>(30);
+        HashOpenAdressing<ElemEqualHashCode> hashEqualCodes = new HashQuadraticProbing<>(30, 0.5, 0.5);
         ElemEqualHashCode[] elems = new ElemEqualHashCode[numberOfElems];
         ElemEqualHashCode[] takenElems = new ElemEqualHashCode[numberOfElems];
         for (int i = 0; i < numberOfElems; i++) {
@@ -259,7 +269,7 @@ public class HashLinearProbingTest {
     @Test
     public void should_CorrectlyDoubleResize_WhenNeeded() {
         //given
-        int hashSize = 50;
+        int hashSize = hash.getSize();
         int expectedHashSize = hashSize * 2;
         int expectedNumberOfElems = hashSize;
 
@@ -279,7 +289,7 @@ public class HashLinearProbingTest {
     public void should_CorrectlyPutAndDeleteAllStringElems() {
         //given
         int length = 200;
-        HashOpenAdressing<String> hashWithStrings = new HashLinearProbing<>();
+        HashOpenAdressing<String> hashWithStrings = new HashQuadraticProbing<>();
         String[] elems = new String[length];
         for (int i = 0; i < length; i++) {
             elems[i] = "String" + i;
@@ -308,7 +318,7 @@ public class HashLinearProbingTest {
     public void should_CorrectlyPutAndDeleteElems_WhenElemsHaveEqualHashCodes() {
         //given
         final int numberOfElems = 20;
-        HashOpenAdressing<ElemEqualHashCode> hashEqualCodes = new HashLinearProbing<>(30);
+        HashOpenAdressing<ElemEqualHashCode> hashEqualCodes = new HashQuadraticProbing<>(30, 0.5, 0.5);
         ElemEqualHashCode[] elems = new ElemEqualHashCode[numberOfElems];
         for (int i = 0; i < numberOfElems; i++) {
             elems[i] = new ElemEqualHashCode(i);
@@ -332,7 +342,7 @@ public class HashLinearProbingTest {
     @Test
     public void should_CorrectlyDeleteFirstElem_WhenElemsHaveEqualHashCodes() {
         //given
-        HashOpenAdressing<ElemEqualHashCode> hashEqualElems = new HashLinearProbing<>(10);
+        HashOpenAdressing<ElemEqualHashCode> hashEqualElems = new HashQuadraticProbing<>(10, 0.5, 0.5);
         ElemEqualHashCode elem1 = new ElemEqualHashCode(10);
         ElemEqualHashCode elem2 = new ElemEqualHashCode(20);
         ElemEqualHashCode elem3 = new ElemEqualHashCode(30);
@@ -352,7 +362,7 @@ public class HashLinearProbingTest {
     @Test
     public void should_CorrectlyDeleteSecondElem_WhenElemsHaveEqualHashCodes() {
         //given
-        HashOpenAdressing<ElemEqualHashCode> hashEqualElems = new HashLinearProbing<>(10);
+        HashOpenAdressing<ElemEqualHashCode> hashEqualElems = new HashQuadraticProbing<>(10, 0.5, 0.5);
         ElemEqualHashCode elem1 = new ElemEqualHashCode(10);
         ElemEqualHashCode elem2 = new ElemEqualHashCode(20);
         ElemEqualHashCode elem3 = new ElemEqualHashCode(30);
@@ -372,7 +382,7 @@ public class HashLinearProbingTest {
     @Test
     public void should_CorrectlyDeleteLastElem_WhenElemsHaveEqualHashCodes() {
         //given
-        HashOpenAdressing<ElemEqualHashCode> hashEqualElems = new HashLinearProbing<>(10);
+        HashOpenAdressing<ElemEqualHashCode> hashEqualElems = new HashQuadraticProbing<>(10, 0.5, 0.5);
         ElemEqualHashCode elem1 = new ElemEqualHashCode(10);
         ElemEqualHashCode elem2 = new ElemEqualHashCode(20);
         ElemEqualHashCode elem3 = new ElemEqualHashCode(30);

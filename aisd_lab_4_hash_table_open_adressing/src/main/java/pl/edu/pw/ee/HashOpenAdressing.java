@@ -1,7 +1,6 @@
 package pl.edu.pw.ee;
 
 import pl.edu.pw.ee.exceptions.ElementNotFoundException;
-import pl.edu.pw.ee.exceptions.NotImplementedException;
 import pl.edu.pw.ee.services.HashTable;
 
 import java.util.Arrays;
@@ -9,16 +8,11 @@ import java.util.Arrays;
 public abstract class HashOpenAdressing<T extends Comparable<T>> implements HashTable<T> {
 
     private final T nil = null;
-    private final T del = (T) new Comparable<T>() {
-        @Override
-        public int compareTo(T o) {
-            return 0;
-        }
-    };
+    private final T del = (T) (Comparable<T>) o -> 0;
+    private final double correctLoadFactor;
     private int size;
     private int nElems;
     private T[] hashElems;
-    private final double correctLoadFactor;
 
     HashOpenAdressing() {
         this(2039); // initial size as random prime number
@@ -45,6 +39,10 @@ public abstract class HashOpenAdressing<T extends Comparable<T>> implements Hash
             if (newElem.equals(hashElems[hashId])) {
                 hashElems[hashId] = newElem;
                 return;
+            }
+            if (i + 1 == size) {
+                doubleResize();
+                i = -1;
             }
             i = (i + 1) % size;
             hashId = hashFunc(key, i);
@@ -128,7 +126,7 @@ public abstract class HashOpenAdressing<T extends Comparable<T>> implements Hash
         this.size *= 2;
         nElems = 0;
         this.hashElems = (T[]) new Comparable[this.size];
-        for (T elem: prevHashElems) {
+        for (T elem : prevHashElems) {
             if (elem != nil) {
                 put(elem);
             }

@@ -2,7 +2,7 @@ package pl.edu.pw.ee.performance;
 
 import org.junit.Before;
 import org.junit.Test;
-import pl.edu.pw.ee.HashLinearProbing;
+import pl.edu.pw.ee.HashQuadraticProbing;
 import pl.edu.pw.ee.services.HashTable;
 
 import java.io.FileNotFoundException;
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-public class HashLinearProbingPerformanceTest {
+public class HashQuadraticProbingPerformanceTest {
 
     private final int[] sizes = {512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144};
     private String[] words;
@@ -24,14 +24,14 @@ public class HashLinearProbingPerformanceTest {
     }
 
     @Test
-    public void hashLinearProbingPerformanceTest() throws FileNotFoundException {
-        final String destPath = "src/test/java/pl/edu/pw/ee/performance/linear_probing_results.txt";
+    public void hashQuadraticProbingPerformanceTest() throws FileNotFoundException {
+        final String destPath = "src/test/java/pl/edu/pw/ee/performance/quadratic_probing_results.txt";
         for (int size : sizes) {
             results.put(size, new ArrayList<>());
         }
         for (int i = 0; i < 30; i++) {
             for (int size : sizes) {
-                long elapsedTime = measureElapsedTime(new HashLinearProbing<>(size));
+                long elapsedTime = measureElapsedTime(new HashQuadraticProbing<>(size, 0.5, 0.5));
                 results.get(size).add(elapsedTime);
             }
         }
