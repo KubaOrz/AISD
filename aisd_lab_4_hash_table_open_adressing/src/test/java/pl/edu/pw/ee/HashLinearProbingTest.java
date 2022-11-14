@@ -76,7 +76,7 @@ public class HashLinearProbingTest {
     }
 
     @Test
-    public void should_CorrectlyPuElems_WhenLowHashInitSize() {
+    public void should_CorrectlyPutElems_WhenLowHashInitSize() {
         //given
         HashOpenAdressing<Integer> hash3 = new HashLinearProbing<>(3);
         int expectedNumOfElems = 100;
@@ -276,7 +276,7 @@ public class HashLinearProbingTest {
     }
 
     @Test
-    public void should_CorrectlyPutAndDeleteAllStringElems() {
+    public void should_CorrectlyPutAndDeleteStringElems() {
         //given
         int length = 200;
         HashOpenAdressing<String> hashWithStrings = new HashLinearProbing<>();

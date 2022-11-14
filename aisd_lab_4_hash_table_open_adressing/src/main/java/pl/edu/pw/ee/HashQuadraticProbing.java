@@ -2,8 +2,8 @@ package pl.edu.pw.ee;
 
 public class HashQuadraticProbing<T extends Comparable<T>> extends HashOpenAdressing<T> {
 
-    private double a;
-    private double b;
+    private final double a;
+    private final double b;
 
     public HashQuadraticProbing() {
         super();
@@ -13,7 +13,7 @@ public class HashQuadraticProbing<T extends Comparable<T>> extends HashOpenAdres
 
     public HashQuadraticProbing(int size, double a, double b) {
         super(size);
-        validateConstants(a, b);
+        validateConstants(b);
         this.a = a;
         this.b = b;
     }
@@ -29,11 +29,9 @@ public class HashQuadraticProbing<T extends Comparable<T>> extends HashOpenAdres
         return hash;
     }
 
-    private void validateConstants(double a, double b) {
-        if (a == 0 && b == 0) {
-            this.a = 0.5;
-            this.b = 0.5;
-            throw new IllegalArgumentException("Constants a and b cannot be both equal to 0!");
+    private void validateConstants(double b) {
+        if (b == 0) {
+            throw new IllegalArgumentException("Constant b cannot be equal to 0!");
         }
     }
 }
