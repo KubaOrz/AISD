@@ -1,15 +1,18 @@
 package pl.edu.pw.ee;
 
-import pl.edu.pw.ee.exceptions.NotImplementedException;
+import pl.edu.pw.ee.exceptions.ElementNotFoundException;
 import pl.edu.pw.ee.services.HashTable;
+
+import java.util.Arrays;
 
 public abstract class HashOpenAdressing<T extends Comparable<T>> implements HashTable<T> {
 
     private final T nil = null;
+    private final T del = (T) (Comparable<T>) o -> 0;
+    private final double correctLoadFactor;
     private int size;
     private int nElems;
     private T[] hashElems;
-    private final double correctLoadFactor;
 
     HashOpenAdressing() {
         this(2039); // initial size as random prime number
@@ -32,7 +35,15 @@ public abstract class HashOpenAdressing<T extends Comparable<T>> implements Hash
         int i = 0;
         int hashId = hashFunc(key, i);
 
-        while (hashElems[hashId] != nil) {
+        while (hashElems[hashId] != nil && hashElems[hashId] != del) {
+            if (newElem.equals(hashElems[hashId])) {
+                hashElems[hashId] = newElem;
+                return;
+            }
+            if (i + 1 == size) {
+                doubleResize();
+                i = -1;
+            }
             i = (i + 1) % size;
             hashId = hashFunc(key, i);
         }
@@ -43,13 +54,40 @@ public abstract class HashOpenAdressing<T extends Comparable<T>> implements Hash
 
     @Override
     public T get(T elem) {
-        // TODO Auto-generated method stub
-        return null;
+        validateInputElem(elem);
+
+        int key = elem.hashCode();
+        int i = 0;
+        int hashId = hashFunc(key, i);
+
+        while (hashElems[hashId] != nil) {
+            if (hashElems[hashId] == elem) {
+                return elem;
+            }
+            i = (i + 1) % size;
+            hashId = hashFunc(key, i);
+        }
+        throw new ElementNotFoundException("Given element not found in the array!");
     }
 
     @Override
     public void delete(T elem) {
-        // TODO Auto-generated method stub
+        validateInputElem(elem);
+
+        int key = elem.hashCode();
+        int i = 0;
+        int hashId = hashFunc(key, i);
+
+        while (hashElems[hashId] != nil) {
+            if (hashElems[hashId].equals(elem)) {
+                hashElems[hashId] = del;
+                nElems--;
+                return;
+            }
+            i = (i + 1) % size;
+            hashId = hashFunc(key, i);
+        }
+        throw new ElementNotFoundException("Given element not found in the array!");
 
     }
 
@@ -84,12 +122,15 @@ public abstract class HashOpenAdressing<T extends Comparable<T>> implements Hash
     }
 
     private void doubleResize() {
+        T[] prevHashElems = Arrays.copyOf(this.hashElems, this.size);
         this.size *= 2;
-        T[] prevHashElems = this.hashElems.clone();
+        nElems = 0;
         this.hashElems = (T[]) new Comparable[this.size];
-        for (T elem: prevHashElems) {
-            put(elem);
+        for (T elem : prevHashElems) {
+            if (elem != nil) {
+                put(elem);
+            }
         }
-        //throw new NotImplementedException("This method is not yet implemented!");
     }
+
 }
