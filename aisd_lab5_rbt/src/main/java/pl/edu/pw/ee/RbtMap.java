@@ -1,6 +1,6 @@
 package pl.edu.pw.ee;
 
-import pl.edu.pw.services.MapInterface;
+import pl.edu.pw.ee.services.MapInterface;
 
 public class RbtMap<K extends Comparable<K>, V> implements MapInterface<K, V> {
 
