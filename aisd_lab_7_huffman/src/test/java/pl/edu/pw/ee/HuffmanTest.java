@@ -18,4 +18,9 @@ public class HuffmanTest {
     public void test() throws IOException {
         huffman.huffman("src/test/java/pl/edu/pw/ee/", false);
     }
+
+    @Test
+    public void should_CompressProperly_WhenCodeLenDivisibleByEight() {
+        String text = "ala ma kota bla bla bla";
+    }
 }

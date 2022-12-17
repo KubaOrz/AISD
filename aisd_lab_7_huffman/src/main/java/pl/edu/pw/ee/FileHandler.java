@@ -1,6 +1,8 @@
 package pl.edu.pw.ee;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.text.Normalizer;
 import java.util.HashMap;
 
 public class FileHandler {
@@ -9,7 +11,7 @@ public class FileHandler {
     private final String resultFile = "compressed_text.txt";
     private final String dictFile = "dictionary.txt";
 
-    public class FileContent {
+    public static class FileContent {
         private final HashMap<Character, Integer> nodes;
         private final String text;
 
@@ -27,44 +29,52 @@ public class FileHandler {
         }
     }
 
-    public FileContent readFileToCompress(String pathname) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(pathname + fileToCompress));
-        StringBuilder text = new StringBuilder();
-        HashMap<Character, Integer> nodes = new HashMap<>();
+    public FileContent readFileToCompress(String pathname) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(pathname + fileToCompress));
+            StringBuilder text = new StringBuilder();
+            HashMap<Character, Integer> nodes = new HashMap<>();
 
-        int character;
+            int character;
 
-        while ((character = reader.read()) != -1) {
-            Character parsedChar = (char) character;
-            text.append(parsedChar);
-            if (nodes.containsKey(parsedChar)) {
-                nodes.put(parsedChar, nodes.get(parsedChar) + 1);
-            } else {
-                nodes.put(parsedChar, 1);
+            while ((character = reader.read()) != -1) {
+                if (character > 128) {
+                    throw new IllegalArgumentException();
+                }
+                Character parsedChar = (char) character;
+                text.append(parsedChar);
+                if (nodes.containsKey(parsedChar)) {
+                    nodes.put(parsedChar, nodes.get(parsedChar) + 1);
+                } else {
+                    nodes.put(parsedChar, 1);
+                }
             }
-        }
 
-        return new FileContent(nodes, text.toString());
+            return new FileContent(nodes, text.toString());
+        } catch (IOException e) {
+            throw new WrongFileNameException();
+        }
     }
 
-    public int writeCodedTextToFile(HashMap<Character, String> codesDict, String text, String pathname) throws FileNotFoundException {
-        PrintWriter printWriter = new PrintWriter(pathname + resultFile);
-        char[] chars = text.toCharArray();
-        int bitCount = 0;
-        StringBuilder encodedText = new StringBuilder();
-        for (char character: chars) {
-            encodedText.append(codesDict.get(character));
-            bitCount += codesDict.get(character).length();
+    public int writeCodedTextToFile(String encodedText, String pathname) {
+        try {
+            PrintWriter printWriter = new PrintWriter(pathname + resultFile);
+            String fullBytesText = convertToFullBytes(new StringBuilder(encodedText), encodedText.length());
+            String textToWrite = compressBinaryString(fullBytesText);
+            printWriter.print(textToWrite);
+            printWriter.close();
+            return textToWrite.length();
+        } catch (FileNotFoundException e) {
+            throw new WrongFileNameException("Nie znaleziono pliku " + resultFile);
         }
-        printWriter.print(compressBinaryString(convertToFullBytes(encodedText, bitCount)));
-        printWriter.close();
-        return bitCount;
     }
 
     private String convertToFullBytes(StringBuilder encodedText, int bitCount) {
-        int bytes = bitCount / 8;
         int lastByteBitCount = (bitCount + 3) % 8;
         int emptyBitCount = 8 - lastByteBitCount;
+        if (emptyBitCount == 8) {
+            emptyBitCount = 0;
+        }
         String emptyBitsBin = Integer.toBinaryString(emptyBitCount);
         emptyBitsBin = String.format("%3s", emptyBitsBin).replaceAll(" ", "0");
         encodedText.append(generateMissingBits(emptyBitCount));
@@ -73,11 +83,7 @@ public class FileHandler {
     }
 
     private String generateMissingBits(int length) {
-        StringBuilder missingBits = new StringBuilder();
-        for (int i = 0; i < length; i++) {
-            missingBits.append('0');
-        }
-        return missingBits.toString();
+        return "0".repeat(length);
     }
 
     private String compressBinaryString(String binary) {
@@ -91,38 +97,52 @@ public class FileHandler {
         return stringToWrite.toString();
     }
 
-    public void writeDictToFile(String codedDict, String pathname) throws FileNotFoundException {
-        PrintWriter printWriter = new PrintWriter(pathname + dictFile);
-        printWriter.println(compressBinaryString(
-                convertToFullBytes(new StringBuilder(codedDict), codedDict.length()))
-        );
-        printWriter.close();
+    public void writeDictToFile(String codedDict, String pathname) {
+        try {
+            PrintWriter printWriter = new PrintWriter(pathname + dictFile);
+            printWriter.println(compressBinaryString(
+                    convertToFullBytes(new StringBuilder(codedDict), codedDict.length()))
+            );
+            printWriter.close();
+        } catch (FileNotFoundException e) {
+            throw new WrongFileNameException();
+        }
     }
 
-    public String readDictFromFile(String pathname) throws IOException {
+    public String readDictFromFile(String pathname) {
         return readFromFile(pathname + dictFile);
     }
 
-    public String readEncodedTextFromFile(String pathname) throws IOException {
+    public String readEncodedTextFromFile(String pathname) {
         return readFromFile(pathname + resultFile);
     }
 
-    private String readFromFile(String pathname) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(pathname));
-        int character;
-        StringBuilder EncodedText = new StringBuilder();
+    private String readFromFile(String pathname) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(pathname));
+            int character;
+            StringBuilder EncodedText = new StringBuilder();
 
-        while ((character = reader.read()) != -1) {
-            String binCharacter = Integer.toBinaryString(character);
-            EncodedText.append(String.format("%8s", binCharacter).replaceAll(" ", "0"));
+            while ((character = reader.read()) != -1) {
+                if (character > 128) {
+                    throw new IllegalArgumentException();
+                }
+                String binCharacter = Integer.toBinaryString(character);
+                EncodedText.append(String.format("%8s", binCharacter).replaceAll(" ", "0"));
+            }
+            return EncodedText.toString();
+        } catch (IOException e) {
+            throw new WrongFileNameException();
         }
-        System.out.println(EncodedText);
-        return EncodedText.toString();
     }
 
-    public void writeDecodedTextToFile(String pathname, String decodedText) throws FileNotFoundException {
-        PrintWriter writer = new PrintWriter(pathname + fileToCompress);
-        writer.print(decodedText);
-        writer.close();
+    public void writeDecodedTextToFile(String pathname, String decodedText) {
+        try {
+            PrintWriter writer = new PrintWriter(pathname + fileToCompress);
+            writer.print(decodedText);
+            writer.close();
+        } catch (FileNotFoundException e) {
+            throw new WrongFileNameException();
+        }
     }
 }
