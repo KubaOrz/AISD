@@ -5,8 +5,4 @@ public class WrongFileNameException extends RuntimeException {
     public WrongFileNameException() {
 
     }
-
-    public WrongFileNameException(String message) {
-        super(message);
-    }
 }

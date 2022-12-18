@@ -27,12 +27,13 @@ public class Huffman {
             });
 
             Node huffmanTree = createHuffmanTree(subTreesQueue);
+            createDict(huffmanTree);
 
             fileHandler.writeDictToFile(encodeDict(huffmanTree), pathToRootDir);
             String encodedText = encodeText(fileContent.getText());
             return fileHandler.writeCodedTextToFile(encodedText, pathToRootDir);
         } else {
-            dictionary = deleteMissingBits(fileHandler.readDictFromFile(pathToRootDir));
+            dictionary = DataConverter.deleteMissingBits(fileHandler.readDictFromFile(pathToRootDir));
             Node huffmanTree = decodeHuffmanTree(null);
             createDict(huffmanTree);
 
@@ -48,9 +49,6 @@ public class Huffman {
         while(subTrees.size() > 1) {
             Node firstNode = subTrees.poll();
             Node secondNode = subTrees.poll();
-            if (firstNode == null || secondNode == null) {
-                throw new NullNodeException();
-            }
             Node newRoot = new Node(firstNode.getCount() + secondNode.getCount());
             newRoot.setLeftChild(firstNode);
             newRoot.setRightChild(secondNode);
@@ -118,8 +116,6 @@ public class Huffman {
                 String character = dictionary.substring(0, 8);
                 dictionary = dictionary.substring(8);
                 return new Node((char) Integer.parseInt(character, 2), 0);
-            } else {
-                throw new IllegalArgumentException("Non permitted signs in the file!");
             }
         }
         return currentNode;
@@ -128,7 +124,7 @@ public class Huffman {
     private String decodeText(String encodedText) {
         StringBuilder currentCode = new StringBuilder();
         StringBuilder decodedText = new StringBuilder();
-        char[] encodedTextChars = deleteMissingBits(encodedText).toCharArray();
+        char[] encodedTextChars = DataConverter.deleteMissingBits(encodedText).toCharArray();
         for (Character bit: encodedTextChars) {
             currentCode.append(bit);
             if (codeCharDict.containsKey(currentCode.toString())) {
@@ -137,10 +133,5 @@ public class Huffman {
             }
         }
         return decodedText.toString();
-    }
-
-    private String deleteMissingBits(String encodedText) {
-        int missingBitsCount = Integer.parseInt(encodedText.substring(0, 3), 2);
-        return encodedText.substring(3, encodedText.length() - missingBitsCount);
     }
 }
