@@ -236,6 +236,26 @@ public class HuffmanTest {
         Assert.assertEquals(expectedCode, decompressedCode);
     }
 
+    @Test
+    public void should_CompressAndDecompressCorrectly_WhenGivenTwoRootPaths() {
+        // given
+        String expected1 = readFile(REGULAR_TEXT_FILE + "to_compress.txt");
+        String expected2 = readFile(NO_MISSING_BITS_FILE + "to_compress.txt");
+
+         // when
+        huffman.huffman(REGULAR_TEXT_FILE, true);
+        huffman.huffman(REGULAR_TEXT_FILE, false);
+        String decompressed1 = readFile(REGULAR_TEXT_FILE + "to_compress.txt");
+
+        huffman.huffman(NO_MISSING_BITS_FILE, true);
+        huffman.huffman(NO_MISSING_BITS_FILE, false);
+        String decompressed2 = readFile(NO_MISSING_BITS_FILE + "to_compress.txt");
+
+        // then
+        Assert.assertEquals(expected1, decompressed1);
+        Assert.assertEquals(expected2, decompressed2);
+    }
+
     private String readFile(String pathname) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(pathname));

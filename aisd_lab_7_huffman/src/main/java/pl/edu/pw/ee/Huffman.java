@@ -5,17 +5,18 @@ import java.util.PriorityQueue;
 
 public class Huffman {
 
-    private final HashMap<Character, String> charCodeDict;
-    private final HashMap<String, Character> codeCharDict;
+    private HashMap<Character, String> charCodeDict;
+    private HashMap<String, Character> codeCharDict;
     private String dictionary;
 
     public Huffman() {
-        charCodeDict = new HashMap<>();
-        codeCharDict = new HashMap<>();
+
     }
 
     public int huffman(String pathToRootDir, boolean compress) {
     	FileHandler fileHandler = new FileHandler();
+        charCodeDict = new HashMap<>();
+        codeCharDict = new HashMap<>();
 
         if (compress) {
             FileHandler.FileContent fileContent = fileHandler.readFileToCompress(pathToRootDir);
@@ -49,6 +50,9 @@ public class Huffman {
         while(subTrees.size() > 1) {
             Node firstNode = subTrees.poll();
             Node secondNode = subTrees.poll();
+            if (firstNode == null || secondNode == null) {
+                throw new IllegalStateException("One of the subtrees is null");
+            }
             Node newRoot = new Node(firstNode.getCount() + secondNode.getCount());
             newRoot.setLeftChild(firstNode);
             newRoot.setRightChild(secondNode);
