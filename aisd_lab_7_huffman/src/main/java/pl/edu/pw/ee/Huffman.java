@@ -1,6 +1,5 @@
 package pl.edu.pw.ee;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
@@ -11,12 +10,13 @@ public class Huffman {
     private String dictionary;
 
     public Huffman() {
-        charCodeDict = new HashMap<>();
-        codeCharDict = new HashMap<>();
+
     }
 
-    public int huffman(String pathToRootDir, boolean compress) throws IOException {
+    public int huffman(String pathToRootDir, boolean compress) {
     	FileHandler fileHandler = new FileHandler();
+        charCodeDict = new HashMap<>();
+        codeCharDict = new HashMap<>();
 
         if (compress) {
             FileHandler.FileContent fileContent = fileHandler.readFileToCompress(pathToRootDir);
@@ -25,39 +25,35 @@ public class Huffman {
             fileContent.getNodes().keySet().forEach(key -> {
                 int count = fileContent.getNodes().get(key);
                 subTreesQueue.add(new Node(key, count));
-                System.out.println(key + ": " + count);
             });
 
             Node huffmanTree = createHuffmanTree(subTreesQueue);
+            createDict(huffmanTree);
 
-            createCharCodeDict(huffmanTree);
-
-            for (Character letter : charCodeDict.keySet()) {
-                System.out.println(letter + ": " + charCodeDict.get(letter));
-            }
             fileHandler.writeDictToFile(encodeDict(huffmanTree), pathToRootDir);
-            return fileHandler.writeCodedTextToFile(charCodeDict, fileContent.getText(), pathToRootDir);
+            String encodedText = encodeText(fileContent.getText());
+            return fileHandler.writeCodedTextToFile(encodedText, pathToRootDir);
         } else {
-            dictionary = deleteMissingBits(fileHandler.readDictFromFile(pathToRootDir));
+            dictionary = DataConverter.deleteMissingBits(fileHandler.readDictFromFile(pathToRootDir));
             Node huffmanTree = decodeHuffmanTree(null);
-            createCharCodeDict(huffmanTree);
+            createDict(huffmanTree);
 
-            for (Character letter : charCodeDict.keySet()) {
-                System.out.println(letter + ": " + charCodeDict.get(letter));
-            }
             String encodedText = fileHandler.readEncodedTextFromFile(pathToRootDir);
             String decodedText = decodeText(encodedText);
+
             fileHandler.writeDecodedTextToFile(pathToRootDir, decodedText);
-            System.out.println(decodedText);
+            return decodedText.length();
         }
-        return -1;
     }
 
     private Node createHuffmanTree(PriorityQueue<Node> subTrees) {
         while(subTrees.size() > 1) {
             Node firstNode = subTrees.poll();
             Node secondNode = subTrees.poll();
-            Node newRoot = new Node(firstNode.getCount() + secondNode.getCount()); // Chyba nie powinno się wywalić
+            if (firstNode == null || secondNode == null) {
+                throw new IllegalStateException("One of the subtrees is null");
+            }
+            Node newRoot = new Node(firstNode.getCount() + secondNode.getCount());
             newRoot.setLeftChild(firstNode);
             newRoot.setRightChild(secondNode);
             subTrees.add(newRoot);
@@ -65,7 +61,7 @@ public class Huffman {
         return subTrees.poll();
     }
 
-    private void createCharCodeDict(Node huffmanTree) {
+    private void createDict(Node huffmanTree) {
         traversePostOrder(huffmanTree, "");
     }
 
@@ -102,6 +98,15 @@ public class Huffman {
         return result;
     }
 
+    private String encodeText(String text) {
+        char[] chars = text.toCharArray();
+        StringBuilder encodedText = new StringBuilder();
+        for (char character: chars) {
+            encodedText.append(charCodeDict.get(character));
+        }
+        return encodedText.toString();
+    }
+
     private Node decodeHuffmanTree(Node currentNode) {
         if (!dictionary.isEmpty()) {
             char currentChar = dictionary.charAt(0);
@@ -115,8 +120,6 @@ public class Huffman {
                 String character = dictionary.substring(0, 8);
                 dictionary = dictionary.substring(8);
                 return new Node((char) Integer.parseInt(character, 2), 0);
-            } else {
-                throw new IllegalArgumentException("Non permitted signs in the file!");
             }
         }
         return currentNode;
@@ -125,7 +128,7 @@ public class Huffman {
     private String decodeText(String encodedText) {
         StringBuilder currentCode = new StringBuilder();
         StringBuilder decodedText = new StringBuilder();
-        char[] encodedTextChars = deleteMissingBits(encodedText).toCharArray();
+        char[] encodedTextChars = DataConverter.deleteMissingBits(encodedText).toCharArray();
         for (Character bit: encodedTextChars) {
             currentCode.append(bit);
             if (codeCharDict.containsKey(currentCode.toString())) {
@@ -134,10 +137,5 @@ public class Huffman {
             }
         }
         return decodedText.toString();
-    }
-
-    private String deleteMissingBits(String encodedText) {
-        int missingBitsCount = Integer.parseInt(encodedText.substring(0, 3), 2);
-        return encodedText.substring(3, encodedText.length() - missingBitsCount);
     }
 }
