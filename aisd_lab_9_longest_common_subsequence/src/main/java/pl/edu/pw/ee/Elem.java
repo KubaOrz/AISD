@@ -1,29 +1,43 @@
 package pl.edu.pw.ee;
 
 public class Elem {
-        private int num;
-        private Integer prevX;
-        private Integer prevY;
+        private final int num;
+        private final Integer prevHorizontalIndex;
+        private final Integer prevVerticalIndex;
+        private boolean belongsToSubsequence;
         
-        Elem(int num, int prevX, int prevY) {
+        public Elem(int num, int prevX, int prevY) {
             this.num = num;
-            this.prevX = prevX;
-            this.prevY = prevY;
+            this.prevHorizontalIndex = prevX;
+            this.prevVerticalIndex = prevY;
+            this.belongsToSubsequence = false;
         }
         
-        Elem(int num) {
+        public Elem(int num) {
             this.num = num;
+            this.prevHorizontalIndex = -10;
+            this.prevVerticalIndex = -10;
+            this.belongsToSubsequence = false;
+
         }
         
-        int getNum() {
+        public int getNum() {
             return num;
         }
         
-        int getPrevX() {
-            return prevX;
+        public int getPrevHorizontalIndex() {
+            return prevHorizontalIndex;
         }
         
-        int getPrevY() {
-            return prevY;
+        public int getPrevVerticalIndex() {
+            return prevVerticalIndex;
+        }
+
+        public boolean doesBelongToSubsequence() {
+            return belongsToSubsequence;
+        }
+
+        public void setBelongToSubsequence(boolean doesBelong) {
+            this.belongsToSubsequence = doesBelong;
         }
 }

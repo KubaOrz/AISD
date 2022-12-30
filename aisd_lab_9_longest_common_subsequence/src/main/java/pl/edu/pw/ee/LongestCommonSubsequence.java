@@ -1,22 +1,33 @@
 package pl.edu.pw.ee;
 
+import java.io.FileNotFoundException;
+import java.io.PrintStream;
+
 class LongestCommonSubsequence {
+
+    private static final int CELL_WIDTH = 5;
+    private final String topStr;
+    private final String leftStr;
+
+    private final int topSize;
+    private final int leftSize;
     
-    private String topStr;
-    private String leftStr;
-    
-    int topSize;
-    int leftSize;
-    
-    private Elem [][] tab;
+    private final Elem [][] tab;
 
     public LongestCommonSubsequence(String topStr, String leftStr){
-	this.topStr = topStr;
+        validateInput(topStr, leftStr);
+	    this.topStr = topStr;
         this.leftStr = leftStr;
         this.topSize = topStr.length() + 1;
         this.leftSize = leftStr.length() + 1;
         this.tab = new Elem[leftSize][topSize];
         initializeTab();
+    }
+
+    private void validateInput(String topStr, String leftStr) {
+        if (topStr == null || leftStr == null) {
+            throw new IllegalArgumentException("String cannot be null!");
+        }
     }
     
     private void initializeTab() {
@@ -30,52 +41,182 @@ class LongestCommonSubsequence {
     }
 
     public String findLCS(){
-	for (int i = 1; i < leftSize; i++) {
-            for (int j = 1; j < topSize; j++) {
-                if (topStr.charAt(j - 1) == leftStr.charAt(i - 1)) {
-                    int newElemNum = tab[i - 1][j - 1].getNum() + 1;
-                    Integer prevX = i - 1;
-                    Integer prevY = j - 1;
-                    tab[i][j] = new Elem(newElemNum, prevX, prevY);
-                } else if (tab[i][j - 1].getNum() > tab[i - 1][j].getNum()) {
-                    int newElemNum = tab[i][j - 1].getNum();
-                    Integer prevX = i;
-                    Integer prevY = j - 1;
-                    tab[i][j] = new Elem(newElemNum, prevX, prevY);
-                } else {
-                    int newElemNum = tab[i - 1][j].getNum();
-                    Integer prevX = i - 1;
-                    Integer prevY = j;
-                    tab[i][j] = new Elem(newElemNum, prevX, prevY);
-                }
-            }
-        }
-        String revSubSequence = "";
+        fillLcsTable();
+
+        StringBuilder subSequence = new StringBuilder();
         int i = leftSize - 1;
         int j = topSize - 1;
         while (tab[i][j].getNum() != 0) {
             Elem current = tab[i][j];
-            Integer prevX = current.getPrevX();
-            Integer prevY = current.getPrevY();
-            if (prevX == i - 1 && prevY == j - 1) {
-                revSubSequence += topStr.charAt(i);
+            current.setBelongToSubsequence(true);
+            int prevX = current.getPrevHorizontalIndex();
+            int prevY = current.getPrevVerticalIndex();
+            if (prevX == j - 1 && prevY == i - 1) {
+                subSequence.insert(0, leftStr.charAt(i - 1));
             }
-            i = prevX;
-            j = prevY;
+            j = prevX;
+            i = prevY;
         }
-        String subSequence = "";
-        for (int k = revSubSequence.length() - 1; k >= 0; k--) {
-             subSequence += revSubSequence.charAt(k);
+        return subSequence.toString();
+    }
+
+    private void fillLcsTable() {
+        int newElemNum, prevHIndex, prevVIndex;
+        for (int vIndex = 1; vIndex < leftSize; vIndex++) {
+            for (int hIndex = 1; hIndex < topSize; hIndex++) {
+                if (topStr.charAt(hIndex - 1) == leftStr.charAt(vIndex - 1)) {
+                    newElemNum = tab[vIndex - 1][hIndex - 1].getNum() + 1;
+                    prevHIndex = hIndex - 1;
+                    prevVIndex = vIndex - 1;
+                } else if (tab[vIndex][hIndex - 1].getNum() > tab[vIndex - 1][hIndex].getNum()) {
+                    newElemNum = tab[vIndex][hIndex - 1].getNum();
+                    prevHIndex = hIndex - 1;
+                    prevVIndex = vIndex;
+                } else {
+                    newElemNum = tab[vIndex - 1][hIndex].getNum();
+                    prevHIndex = hIndex;
+                    prevVIndex = vIndex - 1;
+                }
+                tab[vIndex][hIndex] = new Elem(newElemNum, prevHIndex, prevVIndex);
+            }
         }
-        return subSequence;
     }
 
     public void display(){
-	for (int i = 0; i < leftSize; i++) {
-            for (int j = 0; j < topSize; j++) {
-                System.out.print(tab[i][j].getNum() + " ");
+        PrintStream out = System.out;
+        drawHorizontalBorder(out);
+        for (int i = 0; i <= leftSize; i++) {
+            drawFirstRow(i, out);
+            drawSecondRow(i, out);
+            drawThirdRow(out);
+            drawHorizontalBorder(out);
+        }
+    }
+
+    public void display(String filename){
+        try {
+            PrintStream out = new PrintStream(filename);
+            drawHorizontalBorder(out);
+            for (int i = 0; i <= leftSize; i++) {
+                drawFirstRow(i, out);
+                drawSecondRow(i, out);
+                drawThirdRow(out);
+                drawHorizontalBorder(out);
             }
-            System.out.println();
+            out.close();
+        } catch (FileNotFoundException e) {
+            throw new IllegalArgumentException("Cannot write to file with given name!");
+        }
+    }
+
+    private void drawHorizontalBorder(PrintStream out) {
+        out.println("+" +
+                "-".repeat(CELL_WIDTH + 2) + "+" +
+                ("-".repeat(CELL_WIDTH) + "+").repeat(topSize));
+    }
+
+    private void drawFirstRow(int verticalIndex, PrintStream out) {
+        StringBuilder firstRow = new StringBuilder("|" + centerString(CELL_WIDTH + 2, ""));
+        for (int i = 0; i < topSize; i++) {
+            if (verticalIndex == 0) {
+                firstRow.append(centerString(CELL_WIDTH, ""));
+            } else {
+                Elem currentElem = tab[verticalIndex - 1][i];
+                firstRow.append(drawFirstRowCell(currentElem, verticalIndex - 1, i));
+            }
+        }
+        out.println(firstRow);
+    }
+
+    private void drawSecondRow(int verticalIndex, PrintStream out) {
+        StringBuilder secondRow = new StringBuilder();
+        if (verticalIndex < 2) {
+            secondRow.append("|");
+            secondRow.append(centerString(CELL_WIDTH + 2, ""));
+        } else {
+            String charToWrite = String.valueOf(leftStr.charAt(verticalIndex - 2));
+            secondRow.append("|");
+            secondRow.append(centerString(CELL_WIDTH + 2, convertChar(charToWrite)));
+        }
+
+        for (int i = 0; i < topSize; i++) {
+            if (verticalIndex == 0) {
+                if (i == 0) {
+                    secondRow.append(centerString(CELL_WIDTH, ""));
+                } else {
+                    String charToWrite = String.valueOf(topStr.charAt(i - 1));
+                    secondRow.append(centerString(CELL_WIDTH, convertChar(charToWrite)));
+                }
+            } else {
+                Elem currentElem = tab[verticalIndex - 1][i];
+                secondRow.append(drawSecondRowCell(currentElem, verticalIndex - 1, i));
+            }
+        }
+        out.println(secondRow);
+    }
+
+    private void drawThirdRow(PrintStream out) {
+        out.println("|" +
+                centerString(CELL_WIDTH + 2, "") +
+                centerString(CELL_WIDTH, "").repeat(topSize)
+        );
+    }
+
+    private String drawFirstRowCell(Elem elem, int verticalIndex, int horizontalIndex) {
+        if (!elem.doesBelongToSubsequence()) {
+            return centerString(CELL_WIDTH, "");
+
+        } else if (elem.getPrevHorizontalIndex() == horizontalIndex && elem.getPrevVerticalIndex() == verticalIndex - 1) {
+            return centerString(CELL_WIDTH, "^");
+
+        } else if (elem.getPrevHorizontalIndex() == horizontalIndex - 1 && elem.getPrevVerticalIndex() == verticalIndex - 1) {
+            return "\\" + centerString(CELL_WIDTH - 1, "");
+
+        }  else {
+            return centerString(CELL_WIDTH, "");
+
+        }
+    }
+
+    private String drawSecondRowCell(Elem elem, int verticalIndex, int horizontalIndex) {
+        String numberToPrint = String.valueOf(tab[verticalIndex][horizontalIndex].getNum());
+        if (!elem.doesBelongToSubsequence()) {
+            return centerString(CELL_WIDTH, numberToPrint);
+
+        }
+        if (elem.getPrevHorizontalIndex() == horizontalIndex - 1 && elem.getPrevVerticalIndex() == verticalIndex) {
+            return "<" + centerString(CELL_WIDTH - 1, numberToPrint);
+
+        } else {
+            return centerString(CELL_WIDTH, numberToPrint);
+
+        }
+    }
+
+    private String centerString(int length, String toCenter) {
+        int spaceToFill = length - toCenter.length();
+        int prefixSize = (spaceToFill + 1) / 2;
+        int suffixSize = spaceToFill / 2;
+        if (spaceToFill > 0) {
+            return " ".repeat(prefixSize) + toCenter + " ".repeat(suffixSize) + "|";
+        }
+        else return toCenter;
+    }
+
+    private String convertChar(String character) {
+        switch(character) {
+            case "\n":
+                return "\\n";
+            case "\t":
+                return "\\t";
+            case "\b":
+                return "\\b";
+            case "\r":
+                return "\\r";
+            case " ":
+                return "' '";
+            default:
+                return character;
         }
     }
 
