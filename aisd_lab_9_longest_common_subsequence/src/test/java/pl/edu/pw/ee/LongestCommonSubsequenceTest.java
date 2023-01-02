@@ -1,12 +1,9 @@
 package pl.edu.pw.ee;
 
 import org.junit.Assert;
-
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.Objects;
 
 public class LongestCommonSubsequenceTest {
@@ -181,9 +178,9 @@ public class LongestCommonSubsequenceTest {
     @Test
     public void should_ReturnCorrectLcs_WhenGivenDifferentSpecialSigns() {
         // given
-        String string1 = "Kocham algory\btmy i\n struk\ttury dany\rch!";
-        String string2 = "rytmi\nk\ra";
-        String expectedLCS = "rytmi\nk\r";
+        String string1 = "Kocham algory\btmy i\n struk\ttury dany\r\nch!";
+        String string2 = "rytmi\nk\r\na";
+        String expectedLCS = "rytmi\nk\r\n";
 
         // when
         lcs = new LongestCommonSubsequence(string1, string2);
@@ -285,36 +282,163 @@ public class LongestCommonSubsequenceTest {
 
     @Test
     public void should_ReturnDisplayTableCorrectly_WhenGivenShortStrings() {
-        // given
-        String string1 = "mikołaj";
-        String string2 = "ikona";
-        String modelFilePath = MODELS_PATH + "short_strings_display_model.txt";
-        String resultFilePath = RESULTS_PATH + "short_strings_display_results.txt";
+        try {
+            // given
+            String string1 = "mikołaj";
+            String string2 = "ikona";
+            String modelFilePath = MODELS_PATH + "short_strings_display_model.txt";
+            String resultFilePath = RESULTS_PATH + "short_strings_display_results.txt";
+            PrintStream out = new PrintStream(resultFilePath);
 
-        // when
-        lcs = new LongestCommonSubsequence(string1, string2);
-        lcs.findLCS();
-        lcs.display(resultFilePath);
+            // when
+            lcs = new LongestCommonSubsequence(string1, string2);
+            lcs.findLCS();
+            System.setOut(out);
+            lcs.display();
 
-        // then
-        assert checkFileEquality(modelFilePath, resultFilePath);
+            // then
+            assert checkFileEquality(modelFilePath, resultFilePath);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException();
+        }
     }
 
     @Test
     public void should_ReturnDisplayTableCorrectly_WhenGivenLongStrings() {
-        // given
-        String string1 = "często_z_odkrywaniem";
-        String string2 = "rzeczy_nie_trzeba\n_się_spieszyć";
-        String modelFilePath = MODELS_PATH + "long_strings_display_model.txt";
-        String resultFilePath = RESULTS_PATH + "long_strings_display_results.txt";
+        try {
+            // given
+            String string1 = "często_z_odkrywaniem";
+            String string2 = "rzeczy_nie_trzeba\n_się_spieszyć";
+            String modelFilePath = MODELS_PATH + "long_strings_display_model.txt";
+            String resultFilePath = RESULTS_PATH + "long_strings_display_results.txt";
+            PrintStream out = new PrintStream(resultFilePath);
 
-        // when
-        lcs = new LongestCommonSubsequence(string1, string2);
-        lcs.findLCS();
-        lcs.display(resultFilePath);
+            // when
+            lcs = new LongestCommonSubsequence(string1, string2);
+            lcs.findLCS();
+            System.setOut(out);
+            lcs.display();
 
-        // then
-        assert checkFileEquality(modelFilePath, resultFilePath);
+            // then
+            assert checkFileEquality(modelFilePath, resultFilePath);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException();
+        }
+    }
+
+    @Test
+    public void should_ReturnDisplayTableCorrectly_WhenGivenSpecialSigns() {
+        try {
+            // given
+            String string1 = "\r\n \b\t\f";
+            String string2 = "\n\r\t\f";
+            String modelFilePath = MODELS_PATH + "special_signs_display_model.txt";
+            String resultFilePath = RESULTS_PATH + "special_signs_display_results.txt";
+            PrintStream out = new PrintStream(resultFilePath);
+
+            // when
+            lcs = new LongestCommonSubsequence(string1, string2);
+            lcs.findLCS();
+            System.setOut(out);
+            lcs.display();
+
+            // then
+            assert checkFileEquality(modelFilePath, resultFilePath);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException();
+        }
+    }
+
+    @Test
+    public void should_ReturnDisplayTableCorrectly_WhenGivenMultipleLcsStrings() {
+        try {
+            // given
+            String string1 = "abc";
+            String string2 = "cba";
+            String modelFilePath = MODELS_PATH + "multiple_lcs_display_model.txt";
+            String resultFilePath = RESULTS_PATH + "multiple_lcs_display_results.txt";
+            PrintStream out = new PrintStream(resultFilePath);
+
+            // when
+            lcs = new LongestCommonSubsequence(string1, string2);
+            lcs.findLCS();
+            System.setOut(out);
+            lcs.display();
+
+            // then
+            assert checkFileEquality(modelFilePath, resultFilePath);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException();
+        }
+    }
+
+    @Test
+    public void should_ReturnDisplayTableCorrectly_WhenGivenTwoEmptyStrings() {
+        try {
+            // given
+            String string1 = "";
+            String string2 = "";
+            String modelFilePath = MODELS_PATH + "empty_string_display_model.txt";
+            String resultFilePath = RESULTS_PATH + "empty_string_display_results.txt";
+            PrintStream out = new PrintStream(resultFilePath);
+
+            // when
+            lcs = new LongestCommonSubsequence(string1, string2);
+            lcs.findLCS();
+            System.setOut(out);
+            lcs.display();
+
+            // then
+            assert checkFileEquality(modelFilePath, resultFilePath);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException();
+        }
+    }
+
+    @Test
+    public void should_ReturnDisplayTableCorrectly_WhenFirstStringIsEmpty() {
+        try {
+            // given
+            String string1 = "";
+            String string2 = "ananas";
+            String modelFilePath = MODELS_PATH + "first_string_empty_display_model.txt";
+            String resultFilePath = RESULTS_PATH + "first_string_empty_display_results.txt";
+            PrintStream out = new PrintStream(resultFilePath);
+
+            // when
+            lcs = new LongestCommonSubsequence(string1, string2);
+            lcs.findLCS();
+            System.setOut(out);
+            lcs.display();
+
+            // then
+            assert checkFileEquality(modelFilePath, resultFilePath);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException();
+        }
+    }
+
+    @Test
+    public void should_ReturnDisplayTableCorrectly_WhenSecondStringIsEmpty() {
+        try {
+            // given
+            String string1 = "słodki";
+            String string2 = "";
+            String modelFilePath = MODELS_PATH + "second_string_empty_display_model.txt";
+            String resultFilePath = RESULTS_PATH + "second_string_empty_display_results.txt";
+            PrintStream out = new PrintStream(resultFilePath);
+
+            // when
+            lcs = new LongestCommonSubsequence(string1, string2);
+            lcs.findLCS();
+            System.setOut(out);
+            lcs.display();
+
+            // then
+            assert checkFileEquality(modelFilePath, resultFilePath);
+        } catch (FileNotFoundException e) {
+            throw new IllegalStateException();
+        }
     }
 
     private boolean checkFileEquality(String modelFilePath, String resultFilePath) {

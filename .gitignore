@@ -1,0 +1,53 @@
+# Created by https://www.toptal.com/developers/gitignore/api/java
+# Edit at https://www.toptal.com/developers/gitignore?templates=java
+
+### Java ###
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+replay_pid*
+
+# End of https://www.toptal.com/developers/gitignore/api/java
+/aisd_lab_9_longest_common_subsequence/target/
+/aisd_lab_8_surprise/target/
+/aisd_lab_7_huffman/target/
+/aisd_lab_4_hash_table_open_adressing/target/
+/aisd_lab_3_hash_table/target/
+/aisd_lab_1_sorting/wykresy/
+
+
+/aisd_lab_1_sorting/aisd_lab_1_sorting.iml
+/aisd_lab_1_sorting/aisd_lab_1_sprawozdanie.docx
+/aisd_lab_1_sorting/aisd_lab_1_sprawozdanie.pdf
+/aisd_lab_1_sorting/heap_sort_performance_avg.txt
+/aisd_lab_1_sorting/insertion_sort_performance_avg.txt
+/aisd_lab_1_sorting/insertion_sort_performance_optimistic.txt
+/aisd_lab_1_sorting/insertion_sort_performance_pessimistic.txt
+/aisd_lab_1_sorting/Komendy_excel.txt
+/aisd_lab_1_sorting/quick_sort_performance_avg.txt
+/aisd_lab_1_sorting/quick_sort_performance_pessimistic.txt
+/aisd_lab_1_sorting/ref_algorithm_performance_avg.txt
+/aisd_lab_1_sorting/ref_algorithm_performance_descending.txt
+/aisd_lab_1_sorting/ref_algorithm_performance_pessimistic.txt
+/aisd_lab_1_sorting/selection_sort_performance.txt
+/aisd_lab5_rbt/target/

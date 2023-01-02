@@ -1,8 +1,5 @@
 package pl.edu.pw.ee;
 
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
-
 class LongestCommonSubsequence {
 
     private static final int CELL_WIDTH = 5;
@@ -11,12 +8,12 @@ class LongestCommonSubsequence {
 
     private final int topSize;
     private final int leftSize;
-    
-    private final Elem [][] tab;
 
-    public LongestCommonSubsequence(String topStr, String leftStr){
+    private final Elem[][] tab;
+
+    public LongestCommonSubsequence(String topStr, String leftStr) {
         validateInput(topStr, leftStr);
-	    this.topStr = topStr;
+        this.topStr = topStr;
         this.leftStr = leftStr;
         this.topSize = topStr.length() + 1;
         this.leftSize = leftStr.length() + 1;
@@ -29,18 +26,18 @@ class LongestCommonSubsequence {
             throw new IllegalArgumentException("String cannot be null!");
         }
     }
-    
+
     private void initializeTab() {
         for (int i = 0; i < topSize; i++) {
             tab[0][i] = new Elem(0);
         }
-        
+
         for (int i = 0; i < leftSize; i++) {
             tab[i][0] = new Elem(0);
         }
     }
 
-    public String findLCS(){
+    public String findLCS() {
         fillLcsTable();
 
         StringBuilder subSequence = new StringBuilder();
@@ -82,40 +79,23 @@ class LongestCommonSubsequence {
         }
     }
 
-    public void display(){
-        PrintStream out = System.out;
-        drawHorizontalBorder(out);
+    public void display() {
+        drawHorizontalBorder();
         for (int i = 0; i <= leftSize; i++) {
-            drawFirstRow(i, out);
-            drawSecondRow(i, out);
-            drawThirdRow(out);
-            drawHorizontalBorder(out);
+            drawFirstRow(i);
+            drawSecondRow(i);
+            drawThirdRow();
+            drawHorizontalBorder();
         }
     }
 
-    public void display(String filename){
-        try {
-            PrintStream out = new PrintStream(filename);
-            drawHorizontalBorder(out);
-            for (int i = 0; i <= leftSize; i++) {
-                drawFirstRow(i, out);
-                drawSecondRow(i, out);
-                drawThirdRow(out);
-                drawHorizontalBorder(out);
-            }
-            out.close();
-        } catch (FileNotFoundException e) {
-            throw new IllegalArgumentException("Cannot write to file with given name!");
-        }
-    }
-
-    private void drawHorizontalBorder(PrintStream out) {
-        out.println("+" +
+    private void drawHorizontalBorder() {
+        System.out.println("+" +
                 "-".repeat(CELL_WIDTH + 2) + "+" +
                 ("-".repeat(CELL_WIDTH) + "+").repeat(topSize));
     }
 
-    private void drawFirstRow(int verticalIndex, PrintStream out) {
+    private void drawFirstRow(int verticalIndex) {
         StringBuilder firstRow = new StringBuilder("|" + centerString(CELL_WIDTH + 2, ""));
         for (int i = 0; i < topSize; i++) {
             if (verticalIndex == 0) {
@@ -125,10 +105,10 @@ class LongestCommonSubsequence {
                 firstRow.append(drawFirstRowCell(currentElem, verticalIndex - 1, i));
             }
         }
-        out.println(firstRow);
+        System.out.println(firstRow);
     }
 
-    private void drawSecondRow(int verticalIndex, PrintStream out) {
+    private void drawSecondRow(int verticalIndex) {
         StringBuilder secondRow = new StringBuilder();
         if (verticalIndex < 2) {
             secondRow.append("|");
@@ -152,11 +132,11 @@ class LongestCommonSubsequence {
                 secondRow.append(drawSecondRowCell(currentElem, verticalIndex - 1, i));
             }
         }
-        out.println(secondRow);
+        System.out.println(secondRow);
     }
 
-    private void drawThirdRow(PrintStream out) {
-        out.println("|" +
+    private void drawThirdRow() {
+        System.out.println("|" +
                 centerString(CELL_WIDTH + 2, "") +
                 centerString(CELL_WIDTH, "").repeat(topSize)
         );
@@ -172,7 +152,7 @@ class LongestCommonSubsequence {
         } else if (elem.getPrevHorizontalIndex() == horizontalIndex - 1 && elem.getPrevVerticalIndex() == verticalIndex - 1) {
             return "\\" + centerString(CELL_WIDTH - 1, "");
 
-        }  else {
+        } else {
             return centerString(CELL_WIDTH, "");
 
         }
@@ -199,12 +179,11 @@ class LongestCommonSubsequence {
         int suffixSize = spaceToFill / 2;
         if (spaceToFill > 0) {
             return " ".repeat(prefixSize) + toCenter + " ".repeat(suffixSize) + "|";
-        }
-        else return toCenter;
+        } else return toCenter;
     }
 
     private String convertChar(String character) {
-        switch(character) {
+        switch (character) {
             case "\n":
                 return "\\n";
             case "\t":
@@ -215,6 +194,8 @@ class LongestCommonSubsequence {
                 return "\\r";
             case " ":
                 return "' '";
+            case "\f":
+                return "\\f";
             default:
                 return character;
         }
